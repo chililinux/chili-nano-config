@@ -11,30 +11,9 @@ depends=('nano' 'nano-syntax-highlighting' )
 provides=("$pkgname")
 source=("git+${url}.git")
 sha256sums=('SKIP')
-#install=${pkgname}.install
+install=${pkgname}.install
 
 package() {
     mkdir -p "${pkgdir}/etc/"
     cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
-}
-
-# Make a backup before changing the configuration file
-pre_install() {
-    if [ -f /etc/nanorc ]; then
-        mv -f /etc/nanorc /etc/nanorc.fetchnew
-    fi
-}
-
-# Replace the original file with the new configuration file
-post_install() {
-    if [ -f /etc/nanorc.new ]; then
-        mv -f /etc/nanorc.new /etc/nanorc
-    fi
-}
-
-# Restore the original file
-post_remove() {
-    if [ -f /etc/nanorc.fetchnew ]; then
-        mv -f /etc/nanorc.fetchnew /etc/nanorc
-    fi
 }
