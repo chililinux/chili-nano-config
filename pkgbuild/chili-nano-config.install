@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # shellcheck shell=bash disable=SC1091,SC2039,SC2166
 
-paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano' 'usr/share/nano/extra')
+paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano')
 
 # Pre-installation: Make a backup of the original configuration file and other files
 pre_install() {

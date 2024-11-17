@@ -47,7 +47,7 @@ package() {
 	mkdir -p "${pkgdir}/etc/"
 	cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
 
-	local paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano' 'usr/share/nano/extra')
+	local paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano')
 	for new_path in "${paths[@]}"; do
 		mkdir -p "${pkgdir}/$new_path"
 		for i in ${srcdir}/${pkgname}/${new_path}/*; do
