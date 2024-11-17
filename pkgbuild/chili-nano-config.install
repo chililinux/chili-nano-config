@@ -1,20 +1,58 @@
-# Make a backup before changing the configuration file
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# shellcheck shell=bash disable=SC1091,SC2039,SC2166
+
+paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano' 'usr/share/nano/extra')
+
+# Pre-installation: Make a backup of the original configuration file and other files
 pre_install() {
+	# Backup do arquivo de configuração principal
 	if [ -f /etc/nanorc ]; then
-		mv -f /etc/nanorc /etc/nanorc.fetchsave
+		mv -f /etc/nanorc /etc/nanorc.bak
 	fi
+
+	# Diretórios que precisam de backup
+	for path in "${paths[@]}"; do
+		if [ -d "/$path" ]; then
+			for file in "/$path"/*; do
+				if [ -f "$file" ]; then
+					mv -f "$file" "${file}.bak"
+				fi
+			done
+		fi
+	done
 }
 
-# Replace the original file with the new configuration file
+# Post-installation: Replace the configuration file with the new version and manage .new files
 post_install() {
 	if [ -f /etc/nanorc.new ]; then
 		mv -f /etc/nanorc.new /etc/nanorc
 	fi
+
+	for new_path in "${paths[@]}"; do
+		if [ -d "/${new_path}" ]; then
+			for i in /${new_path}/*.new; do
+				if [ -f "$i" ]; then
+					mv -f "$i" "${i%.new}"
+				fi
+			done
+		fi
+	done
 }
 
-# Restore the original file
+# Post-remove: Restore the original configuration file if it exists
 post_remove() {
-	if [ -f /etc/nanorc.fetchsave ]; then
-		mv -f /etc/nanorc.fetchsave /etc/nanorc
+	if [ -f /etc/nanorc.bak ]; then
+		mv -f /etc/nanorc.bak /etc/nanorc
 	fi
+
+	for new_path in "${paths[@]}"; do
+		if [ -d "/${new_path}" ]; then
+			for i in /${new_path}/*; do
+				if [[ -f "$i" && "$i" == *.new ]]; then
+					rm -f "$i"
+				fi
+			done
+		fi
+	done
 }

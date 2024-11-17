@@ -4,7 +4,7 @@ pkgname=chili-nano-config
 pkgdesc="Custom nano configuration for ChiliLinux"
 depends=('git')
 depends+=('ncurses') # tput
-depends+=('jq') # tput
+depends+=('jq')      # tput
 #makedepends=('')
 #optdepends=('')
 conflicts=('biglinux-nano-config')
@@ -44,15 +44,23 @@ check() {
 }
 
 package() {
-  mkdir -p "${pkgdir}/etc/"
-  cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
+	mkdir -p "${pkgdir}/etc/"
+	cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
 
-  local new_path="usr/share/nano-syntax-highlighting"
-  mkdir -p "${pkgdir}/${pkgname}/$new_path"
-  for i in "${srcdir}/${pkgname}/${new_path}/*"; do
-    filename=$(basename "$i")
-    cp "$i" "${pkgdir}/${new_path}/${filename}.new"
-  done
+	local paths=('usr/share/nano-syntax-highlighting' 'usr/share/nano' 'usr/share/nano/extra')
+	for new_path in "${paths[@]}"; do
+		mkdir -p "${pkgdir}/$new_path"
+		for i in ${srcdir}/${pkgname}/${new_path}/*; do
+			if [[ -d "$i" ]]; then
+				# Copiar diretórios recursivamente
+				cp -r "$i" "${pkgdir}/${new_path}/"
+			elif [[ -f "$i" ]]; then
+				# Copiar arquivos individuais
+				filename=$(basename "$i")
+				cp "$i" "${pkgdir}/${new_path}/${filename}.new"
+			fi
+		done
+	done
 
 	cd "${srcdir}/${pkgname}"
 	# Determine the correct source directory
@@ -61,14 +69,6 @@ package() {
 	else
 		srcdir="${srcdir}/${pkgname}"
 	fi
-
-	# Install files
-	local dirs=('usr' 'opt')
-	for dir in "${dirs[@]}"; do
-		if [ -d "${srcdir}/${dir}" ]; then
-			cp -a "${srcdir}/${dir}" "${pkgdir}/"
-		fi
-	done
 
 	# Install license file if present
 	if [ -f "LICENSE" ]; then
