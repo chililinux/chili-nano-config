@@ -48,8 +48,8 @@ package() {
   cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
 
   local new_path="usr/share/nano-syntax-highlighting"
-  mkdir -p "${pkgdir}/$new_path"
-  for i in "${srcdir}/${pkgname}/${new_path}/*.nanorc"; do
+  mkdir -p "${pkgdir}/${pkgname}/$new_path"
+  for i in "${srcdir}/${pkgname}/${new_path}/*"; do
     filename=$(basename "$i")
     cp "$i" "${pkgdir}/${new_path}/${filename}.new"
   done
