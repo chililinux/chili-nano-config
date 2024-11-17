@@ -7,9 +7,9 @@ depends+=('ncurses') # tput
 depends+=('jq') # tput
 #makedepends=('')
 #optdepends=('')
-#conflicts=('')
-#provides=('')
-#replaces=('')
+conflicts=('biglinux-nano-config')
+provides=('biglinux-nano-config')
+replaces=('biglinux-nano-config')
 pkgver=$(date +%Y.%m.%d)
 pkgrel=$(date +%H%M)
 arch=('any')
@@ -44,8 +44,17 @@ check() {
 }
 
 package() {
-	cd "${srcdir}/${pkgname}"
+  mkdir -p "${pkgdir}/etc/"
+  cp "${srcdir}/${pkgname}/etc/nanorc" "${pkgdir}/etc/nanorc.new"
 
+  local new_path="usr/share/nano-syntax-highlighting"
+  mkdir -p "${pkgdir}/$new_path"
+  for i in "${srcdir}/${pkgname}/${new_path}/*.nanorc"; do
+    filename=$(basename "$i")
+    cp "$i" "${pkgdir}/${new_path}/${filename}.new"
+  done
+
+	cd "${srcdir}/${pkgname}"
 	# Determine the correct source directory
 	if [ -d "${pkgname}" ]; then
 		srcdir="${srcdir}/${pkgname}/${pkgname}"
@@ -54,7 +63,7 @@ package() {
 	fi
 
 	# Install files
-	local dirs=("usr" "etc" "opt")
+	local dirs=('usr' 'opt')
 	for dir in "${dirs[@]}"; do
 		if [ -d "${srcdir}/${dir}" ]; then
 			cp -a "${srcdir}/${dir}" "${pkgdir}/"
