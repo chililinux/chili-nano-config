@@ -2,14 +2,11 @@
 
 pkgname=chili-nano-config
 pkgdesc="Custom nano configuration for ChiliLinux"
-depends=('git')
-depends+=('ncurses') # tput
-depends+=('jq')      # tput
-#makedepends=('')
-#optdepends=('')
+depends=()
+optdepends=(git ncurses jq)
 conflicts=('biglinux-nano-config')
-provides=('biglinux-nano-config')
-replaces=('biglinux-nano-config')
+#provides=('biglinux-nano-config')
+#replaces=('biglinux-nano-config')
 pkgver=$(date +%Y%m%d)
 pkgrel=$(date +%H%M)
 arch=('any')
@@ -24,24 +21,6 @@ if [ -e "${pkgname}.install" ]; then
 elif [ -e "pkgbuild.install" ]; then
 	install=pkgbuild.install
 fi
-
-prepare() {
-	cd "${srcdir}/${pkgname}"
-	# Add any preparation steps here, if needed
-	# For example: patch -p1 < "${srcdir}/patch-file.patch"
-}
-
-build() {
-	cd "${srcdir}/${pkgname}"
-	# Add build steps here, if needed
-	# For example: make
-}
-
-check() {
-	cd "${srcdir}/${pkgname}"
-	# Add check/test steps here, if needed
-	# For example: make check
-}
 
 package() {
 	mkdir -p "${pkgdir}/etc/"
